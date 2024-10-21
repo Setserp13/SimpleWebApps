@@ -12,9 +12,6 @@ var stroke = {
 	vertices : []
 }
 
-//var lastMousePos = null;
-//var lastMousemoveTime = 0;
-//var mousemoveTime = 0;
 var mouseMovementX = 0;
 
 
@@ -32,18 +29,7 @@ function start()
 	mousePos = { x: getX(stroke, canvas.height / 2), y: canvas.height / 2 };
 	mouseMovementX = 0;
 
-	canvas.addEventListener('mousemove', function(evt) {
-
-		mouseMovementX = evt.movementX;
-		//mousemoveTime++;
-		/*var newMousePos = getMousePos(canvas, evt);
-		if(lastMousePos == null) lastMousePos = newMousePos;
-		mouseMovementX = Mathf.sgn(newMousePos.x - lastMousePos.x);
-		lastMousePos = newMousePos;*/
-
-    	//mousePos = getMousePos(canvas, evt);
-    //console.log('Mouse position: ' + mousePos.x + ',' + mousePos.y);
-  	}, false);
+	canvas.addEventListener('mousemove', function(evt) { mouseMovementX = evt.movementX; }, false);
 
 
   	time = 0;
@@ -172,16 +158,6 @@ function drawRoad(canvas, road)
 
 	drawPolygon(canvas, leftSide, '#f00');
 	drawPolygon(canvas, rightSide, '#00f');
-	/*var ctx = canvas.getContext("2d");
-	ctx.beginPath();
-	ctx.lineCap = "round";
-	ctx.lineWidth = 10;
-	for(var i = 0; i < road.length - 1; i++)
-	{
-		ctx.moveTo(road[i][0], road[i][1]);
-		ctx.lineTo(road[i + 1][0], road[i + 1][1]);
-		ctx.stroke();
-	}*/
 }
 
 function createRoad(canvas)
@@ -221,39 +197,6 @@ function updateRoad(road)
 
 	return road;
 }
-
-
-/*function drawRoad(canvas, road)
-{
-	var ctx = canvas.getContext("2d");
-	ctx.beginPath();
-	for(var i = 0; i < road.length; i++)
-	{
-		ctx.moveTo(road[i], i);
-		ctx.lineTo(road[i] + 10, i);
-		ctx.stroke();
-	}
-}
-
-function createRoad(canvas)
-{
-	var result = [];
-	var x = canvas.width / 2;
-	for(var i = 0; i < canvas.height; i++)
-	{
-		result.push(x);
-		x = clamp(x + randomRange(-5, 5), 10, canvas.width - 10);
-	}
-	return result;
-}
-
-function updateRoad(road)
-{
-	road.pop();
-	item = clamp(road[0] + randomRange(-5, 5), 10, canvas.width - 10);
-	road.unshift(item);
-	return road;
-}*/
 
 function drawPolygon(canvas, vertices, fillStyle)
 {
