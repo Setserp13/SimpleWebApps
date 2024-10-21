@@ -107,7 +107,7 @@ function getSlice(stroke, y)
 	var x = getX(stroke, y);
 	if(x != null)
 	{
-		return { min : new Vector2(x - width * (1 - alignment), y), max : new Vector2(x + width * alignment, y) };
+		return { min : new Vector(x - width * (1 - alignment), y), max : new Vector2(x + width * alignment, y) };
 	}
 	return null;
 }
@@ -218,26 +218,6 @@ function randomRange(min, max)
 {
 	return min + Math.random() * (max - min);
 }
-
-
-
-class Vector2
-{
-  constructor(x, y)
-  {
-    this.x = x;
-    this.y = y;
-  }
-
-  static lerp(a, b, t)
-  {
-  	return new Vector2(Mathf.lerp(a.x, b.x, t), Mathf.lerp(a.y, b.y, t));
-  }
-}
-
-
-
-
 
 </script>
 		
