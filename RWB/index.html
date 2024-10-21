@@ -249,6 +249,8 @@ class Mathf
 		}
 		return value;
 	}
+
+	static clamp01(value) { return Mathf.clamp(value, 0, 1); }
 	
 	static lerp(a, b, t) { return a + t * (b - a); }
 
@@ -265,7 +267,7 @@ class Mathf
 		return 0;
 	}
 
-	static isLerp(a, b, value) { return contains(0, 1, inverseLerp(a, b, value)); }
+	static isLerp(a, b, value) { return Mathf.contains(0, 1, Mathf.inverseLerp(a, b, value)); }
 
 	static contains(min, max, value) { return min <= value && value <= max; }
 
