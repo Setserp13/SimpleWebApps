@@ -156,6 +156,8 @@ function drawRect(ctx, x, y, width, height, fill="#ffffffff", stroke="#000000ff"
 	ctx.stroke();
 }
 
+const MINE = '*'
+
 function generateBoard(width, height, mineCount)
 {
 	positions = fromFunction(width * height,
@@ -172,13 +174,13 @@ function generateBoard(width, height, mineCount)
 	result = full2(width, height, 0);
 	for(var i = 0; i < mineCount; i++)
 	{
-		result[positions[i][0]][positions[i][1]] = { value: "X", visible: false };
+		result[positions[i][0]][positions[i][1]] = { value: MINE, visible: false };
 	}
 	for(var i = 0; i < width; i++)
 	{
 		for(var j = 0; j < height; j++)
 		{
-			if(result[i][j].value == "X")
+			if(result[i][j].value == MINE)
 			{
 				continue;
 			}
@@ -193,7 +195,7 @@ function generateBoard(width, height, mineCount)
 					}
 					if(i + k > -1 && i + k < width && j + l > -1 && j + l < height)
 					{
-						if(result[i + k][j + l].value == "X")
+						if(result[i + k][j + l].value == MINE)
 						{
 							mineCounter++;
 						}
@@ -218,7 +220,7 @@ function drawBoard(ctx, board, offset, cellSize, spacing)
 
 			cell = grid.cell(i, j + 1);
 			ctx.font = "20px JosefinSansBold";
-			if(obj.value == "X")
+			if(obj.value == MINE)
 			{
 				//ctx.drawImage(mine, cell.min.x, cell.min.y, cell.size.x, cell.size.y);
 				
@@ -275,7 +277,7 @@ function show(board, i, j, visited = full2(board.size2()[0], board.size2()[1], f
 		}
 	}
 	//CHECK
-	if(board[i][j].value == "X")
+	if(board[i][j].value == MINE)
 	{
 		return -1;
 	}
