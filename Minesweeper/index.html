@@ -176,36 +176,30 @@ function generateBoard(width, height, mineCount)
 		result[positions[i][0]][positions[i][1]] = { value: MINE, visible: false };
 	}
 	result.forEach2((obj, i, j) => {
-	//for(var i = 0; i < width; i++)
-	//{
-		//for(var j = 0; j < height; j++)
-		//{
-			if(result[i][j].value == MINE)
+		if(result[i][j].value == MINE)
+		{
+			return;
+		}
+		mineCounter = 0;
+		for(var k = -1; k < 2; k++)
+		{
+			for(l = -1; l < 2; l++)
 			{
-				return;
-				//continue;
-			}
-			mineCounter = 0;
-			for(var k = -1; k < 2; k++)
-			{
-				for(l = -1; l < 2; l++)
+				if(k == 0 && l == 0)
 				{
-					if(k == 0 && l == 0)
+					continue;
+				}
+				if(i + k > -1 && i + k < width && j + l > -1 && j + l < height)
+				{
+					if(result[i + k][j + l].value == MINE)
 					{
-						continue;
-					}
-					if(i + k > -1 && i + k < width && j + l > -1 && j + l < height)
-					{
-						if(result[i + k][j + l].value == MINE)
-						{
-							mineCounter++;
-						}
+						mineCounter++;
 					}
 				}
 			}
-			result[i][j] = { value: mineCounter, visible: false };
-		});
-	//}
+		}
+		result[i][j] = { value: mineCounter, visible: false };
+	});
 	console.log(result);
 	return result;
 }
