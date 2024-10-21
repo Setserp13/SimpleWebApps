@@ -108,7 +108,7 @@ function getSlice(stroke, y)
 	var x = getX(stroke, y);
 	if(x != null)
 	{
-		return { min : new Vector(x - width * (1 - alignment), y), max : new Vector2(x + width * alignment, y) };
+		return { min : new Vector(x - width * (1 - alignment), y), max : new Vector(x + width * alignment, y) };
 	}
 	return null;
 }
