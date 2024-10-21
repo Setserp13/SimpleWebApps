@@ -1,0 +1,330 @@
+<DOCTYPE !HTML>
+<html>
+<head>
+	<title>Minesweeper</title>
+	<script src="https://rawcdn.githack.com/Setserp13/jsx/refs/heads/main/Geo.js"></script>
+	<script src="https://rawcdn.githack.com/Setserp13/jsx/refs/heads/main/CollectionsEx.js"></script>
+	<script src="script.js" ></script>
+</head>
+<body>
+	<canvas id="canvas" width="800" height="600" style="border:1px solid #000000;"></canvas>
+	<form>
+		<label>Width<input id="width" type="number" min="0" max="200" value="30"/></label>
+		<label>Height<input id="height" type="number" min="0" max="200" value="16"/></label>
+		<label>Mines<input id="mines" type="number" min="0" value="99"/></label>
+		<button id="start" type="button">Start</button>
+		<span id="timerDisplay">00:00:00.000</span>
+	</form>
+
+<script>
+
+
+class Random
+{
+	static index(count)
+	{
+		return Random.range(0, count - 1);	
+	}
+
+	static range(min, max)
+	{
+		return min + parseInt(Math.random() * (max - min));
+	}
+}
+
+var grid = new Grid(new Vector(30,30));
+
+var board = generateBoard(10, 10, 10);
+//alert('Page loaded!');
+var c = undefined;
+var ctx = undefined;
+
+var mine = new Image();
+mine.src = "img/mine.png";
+var cover = new Image();
+cover.src = "img/cover.png";
+
+var numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8].map((num) => {
+	var img = new Image();
+	img.src = "img/" + num.toString() + ".png";
+	return img;
+});
+
+var font = new FontFace('JosefinSansBold', 'url(JosefinSans-Bold.ttf)');
+font.load().then(function(font){
+
+	// with canvas, if this is ommited won't work
+	document.fonts.add(font);
+	console.log('Font loaded');
+
+});
+
+let timer;
+let totalMilliseconds = 0;
+
+function updateTimerDisplay()
+{
+	const hours = Math.floor(totalMilliseconds / 3600000);
+	const minutes = Math.floor((totalMilliseconds % 3600000) / 60000);
+	const seconds = Math.floor((totalMilliseconds % 60000) / 1000);
+	const milliseconds = totalMilliseconds % 1000;
+
+            // Format time to HH:MM:SS.mmm
+	const formattedTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(milliseconds).padStart(3, '0')}`;
+	document.getElementById('timerDisplay').textContent = formattedTime;
+}
+
+function startTimer() {
+	console.log('Start Timer');
+            // Clear any existing timer to avoid multiple intervals
+	clearInterval(timer);
+
+	resetTimer();
+
+	const startTime = Date.now() - totalMilliseconds; // Capture the start time
+	timer = setInterval(() => {
+		totalMilliseconds = Date.now() - startTime; // Calculate elapsed time
+		updateTimerDisplay();
+		}, 10); // Update every 10 milliseconds
+}
+
+function stopTimer() {
+	clearInterval(timer);
+}
+
+function resetTimer() {
+	totalMilliseconds = 0;
+	updateTimerDisplay();
+}
+
+
+function main()
+{
+
+	c = document.getElementById("canvas");
+	ctx = c.getContext("2d");
+	
+	//startBoard(c);
+	document.getElementById("start").addEventListener("click", (event) => { startBoard(c); startTimer(); });
+
+	
+	
+}
+
+let notVisibleCount = 0;
+let mines = 0;
+
+function startBoard(c)
+{
+	width = document.getElementById("width").value
+	height = document.getElementById("height").value
+	notVisibleCount = width * height;
+	mines = document.getElementById("mines").value
+	board = generateBoard(width, height, mines);
+	c.setAttribute("width", grid.cellSize.x * width);
+	c.setAttribute("height", grid.cellSize.y * height);
+	drawBoard(ctx, board, grid);
+	c.addEventListener("click", onclick);
+}
+
+function onclick(evt)
+{
+	update(c, evt);
+}
+
+window.onload = main
+
+function drawGrid(ctx, offset, cellSize, cellCount, spacing)
+{
+	for(var i = 0; i < cellCount.x; i++)
+	{
+		for(var j = 0; j < cellCount.y; j++)
+		{
+			pos = offset.add(cellSize.add(spacing).mul(new Vector(i, j)))
+			drawRect(ctx, pos.x, pos.y, cellSize.x, cellSize.y);
+		}
+	}
+}
+
+function drawRect(ctx, x, y, width, height, fill="#ffffffff", stroke="#000000ff")
+{
+	ctx.beginPath();
+	ctx.rect(x, y, width, height);
+	ctx.fillStyle = fill;
+	ctx.strokeStyle = stroke;
+	ctx.fill();
+	ctx.stroke();
+}
+
+function generateBoard(width, height, mineCount)
+{
+	positions = fromFunction(width * height,
+		(i) => {
+			return [Math.floor(i / height), i % height];
+		}
+	);
+	length = positions.length;
+	for(var i = 0; i < length - mineCount; i++)
+	{
+		positions.splice(Random.index(positions.length), 1);
+	}
+
+	result = full2(width, height, 0);
+	for(var i = 0; i < mineCount; i++)
+	{
+		result[positions[i][0]][positions[i][1]] = { value: "X", visible: false };
+	}
+	for(var i = 0; i < width; i++)
+	{
+		for(var j = 0; j < height; j++)
+		{
+			if(result[i][j].value == "X")
+			{
+				continue;
+			}
+			mineCounter = 0;
+			for(var k = -1; k < 2; k++)
+			{
+				for(l = -1; l < 2; l++)
+				{
+					if(k == 0 && l == 0)
+					{
+						continue;
+					}
+					if(i + k > -1 && i + k < width && j + l > -1 && j + l < height)
+					{
+						if(result[i + k][j + l].value == "X")
+						{
+							mineCounter++;
+						}
+					}
+				}
+			}
+			result[i][j] = { value: mineCounter, visible: false };
+		}
+	}
+	console.log(result);
+	return result;
+}
+
+
+function drawBoard(ctx, board, offset, cellSize, spacing)
+{
+	board.forEach2((obj, i, j) => {
+		cell = grid.cell(i, j);
+		if(obj.visible)
+		{
+			drawRect(ctx, cell.min.x, cell.min.y, cell.size.x, cell.size.y);
+
+			cell = grid.cell(i, j + 1);
+			ctx.font = "20px JosefinSansBold";
+			if(obj.value == "X")
+			{
+				//ctx.drawImage(mine, cell.min.x, cell.min.y, cell.size.x, cell.size.y);
+				
+				ctx.fillStyle = "#000000ff";
+			}
+			else// if(board[i][j].value > 0)
+			{
+				ctx.fillStyle = ["#ff3737ff", "#ff8337ff", "#ffe272ff", "#9de16fff", "#36d8b7ff", "#53afffff", "#de6fffff", "#ff74bcff"][obj.value - 1];
+				//ctx.drawImage(numbers[board[i][j].value], cell.min.x, cell.min.y, cell.size.x, cell.size.y);
+			}
+			ctx.fillText(obj.value.toString(), cell.min.x + 5, cell.min.y - 5);
+		}
+		else
+		{
+			//ctx.drawImage(cover, cell.min.x, cell.min.y, cell.size.x, cell.size.y);
+			drawRect(ctx, cell.min.x, cell.min.y, cell.size.x, cell.size.y, "#808080ff");
+		}
+	});
+}
+
+function getMousePos(canvas, evt)
+{
+	var rect = canvas.getBoundingClientRect(), // abs. size of element
+	scaleX = canvas.width / rect.width,    // relationship bitmap vs. element for x
+	scaleY = canvas.height / rect.height;  // relationship bitmap vs. element for y
+	return new Vector((evt.clientX - rect.left) * scaleX, (evt.clientY - rect.top) * scaleY);
+}
+
+function show(board, i, j, visited = full2(board.size2()[0], board.size2()[1], false))
+{
+	if(!board.inRange2(i, j))
+	{
+		return;
+	}
+	if(visited[i][j])
+	{
+		return;
+	}
+	visited[i][j] = true;
+	if(!board[i][j].visible)
+	{
+		notVisibleCount--;
+	}
+	board[i][j].visible = true;
+	if(board[i][j].value == 0)
+	{
+		for(var k = -1; k < 2; k++)
+		{
+			for(l = -1; l < 2; l++)
+			{
+				//console.log(i + k);
+				show(board, i + k, j + l, visited);
+			}
+		}
+	}
+	//CHECK
+	if(board[i][j].value == "X")
+	{
+		return -1;
+	}
+	//console.log([notVisibleCount, mines]);
+	if(notVisibleCount == mines)
+	{
+		return 1;
+	}
+	return 0;
+}
+
+function fillRelativeText(canvas, ctx, text, width = .75)
+{
+	ctx.textAlign = 'center';
+	ctx.font = "100px JosefinSansBold";
+	fontSize = Math.floor((ctx.canvas.width * width) / ctx.measureText(text).width * 100);
+	console.log(fontSize);
+	ctx.font = fontSize.toString() + "px JosefinSansBold";
+	ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+}
+
+function update(canvas, evt)
+{
+	mousePos = getMousePos(canvas, evt);
+	cell = grid.pointToCell(mousePos);
+	gameState = show(board, cell.x, cell.y);
+	drawBoard(ctx, board, grid);
+	//gameState = check(board);
+	if(gameState != 0)
+	{
+		c.removeEventListener("click", onclick);
+		stopTimer();
+	}
+	if(gameState > 0)
+	{
+		//alert("You win!");
+		ctx.fillStyle = "#00ff00ff";
+		fillRelativeText(canvas, ctx, "YOU WIN!");
+	}
+	else if(gameState < 0)
+	{
+		//alert("You lost!");
+		ctx.fillStyle = "#ff0000ff";
+		fillRelativeText(canvas, ctx, "YOU LOSE!");
+	}
+
+}
+</script>
+
+
+</body>
+</html>
