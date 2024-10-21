@@ -182,7 +182,8 @@ function generateBoard(width, height, mineCount)
 		//{
 			if(result[i][j].value == MINE)
 			{
-				continue;
+				return;
+				//continue;
 			}
 			mineCounter = 0;
 			for(var k = -1; k < 2; k++)
