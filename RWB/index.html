@@ -61,15 +61,6 @@ function update()
 	context.arc(mousePos.x, canvas.height / 2, 3, 0, 2 * Math.PI);
 	context.fill();
 
-	
-	/*if(lastMousemoveTime != mousemoveTime)
-	{
-		lastMousemoveTime = mousemoveTime;
-	}
-	else
-	{
-		mouseMovementX = 0;//mouse is not moving
-	}*/
 	mousePos.x += Mathf.sgn(mouseMovementX) * .75;
 
 	var slice = getSlice(stroke, canvas.height / 2);
