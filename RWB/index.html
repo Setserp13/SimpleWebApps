@@ -180,7 +180,7 @@ function createRoad(canvas)
 	{
 		result.push([x, y]);
 		y += randomRange(50, 100);
-		x = clamp(x + randomRange(-30, 30), 10, canvas.width - 10);
+		x = Mathf.clamp(x + randomRange(-30, 30), 10, canvas.width - 10);
 	}
 	return result;
 }
@@ -196,7 +196,7 @@ function updateRoad(road)
 	if(road[1][1] > 0)
 	{
 		var y = road[0][1] -randomRange(10, 30);
-		var x = clamp(road[0][0] + randomRange(-30, 30), 10, canvas.width - 10);
+		var x = Mathf.clamp(road[0][0] + randomRange(-30, 30), 10, canvas.width - 10);
 		road.unshift([x, y]);
 	}
 	if(road[road.length - 2][1] > canvas.height)
@@ -228,18 +228,7 @@ function randomRange(min, max)
 	return min + Math.random() * (max - min);
 }
 
-function clamp(value, min, max)
-{
-	if(value < min)
-	{
-		return min;
-	}
-	if(value > max)
-	{
-		return max;
-	}
-	return value;
-}
+
 
 class Vector2
 {
@@ -257,6 +246,19 @@ class Vector2
 
 class Mathf
 {
+	static clamp(value, min, max)
+	{
+		if(value < min)
+		{
+			return min;
+		}
+		if(value > max)
+		{
+			return max;
+		}
+		return value;
+	}
+	
 	static lerp(a, b, t) { return a + t * (b - a); }
 
 	static sgn(a)
@@ -271,13 +273,15 @@ class Mathf
 		}
 		return 0;
 	}
+
+	static isLerp(a, b, value) { return contains(0, 1, inverseLerp(a, b, value)); }
+
+	static contains(min, max, value) { return min <= value && value <= max; }
+
+	static inverseLerp(a, b, value) { return (value - a) / (b - a); }
 }
 
-function isLerp(a, b, value) { return contains(0, 1, inverseLerp(a, b, value)); }
 
-function contains(min, max, value) { return min <= value && value <= max; }
-
-function inverseLerp(a, b, value) { return (value - a) / (b - a); }
 
 </script>
 		
