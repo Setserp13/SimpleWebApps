@@ -15,8 +15,6 @@ var road;
 var canvas;
 var mousePos;
 
-
-
 var stroke = {
 	alignment : 0.5,
 	width : 50,
@@ -86,10 +84,6 @@ function update()
 	//setInterval(update, 2000);//draw, 500);
 }
 
-
-
-
-
 const getMousePos = (canvas, evt) => {
   const rect = canvas.getBoundingClientRect();
   return {
@@ -97,8 +91,6 @@ const getMousePos = (canvas, evt) => {
     y: ((evt.clientY - rect.top) / (rect.bottom - rect.top)) * canvas.height,
   };
 };
-
-
 
 function getSlice(stroke, y)
 {
@@ -128,13 +120,6 @@ function getX(stroke, y)
 	}
 	return null;
 }
-
-
-
-
-
-
-
 
 function drawRoad(canvas, road)
 {
