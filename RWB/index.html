@@ -119,8 +119,8 @@ function getX(stroke, y)
 	var vertices = stroke.vertices;
 	for(var i = 0; i < vertices.length - 1; i++)
 	{
-		var t = inverseLerp(vertices[i][1], vertices[i + 1][1], y);
-		if(contains(0, 1, t))
+		var t = Mathf.inverseLerp(vertices[i][1], vertices[i + 1][1], y);
+		if(Mathf.contains(0, 1, t))
 		{
 			return Mathf.lerp(vertices[i][0], vertices[i + 1][0], t);
 		}
