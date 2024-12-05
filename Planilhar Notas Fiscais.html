@@ -39,6 +39,7 @@
 		from pyodide.ffi import create_proxy
 		from pyx.nfepy import xmls2df
 		import xml.etree.ElementTree as ET
+		import pandas as pd
 		
 		def format_nfe_sheet(df):
 			for column in ['det/prod/qCom', 'det/prod/vUnCom', 'det/prod/vProd']:
