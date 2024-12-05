@@ -39,14 +39,37 @@
 		from pyodide.ffi import create_proxy
 		from pyx.nfepy import xmls2df
 		import xml.etree.ElementTree as ET
-
+		
+		def format_nfe_sheet(df):
+			for column in ['det/prod/qCom', 'det/prod/vUnCom', 'det/prod/vProd']:
+				df[column] = df[column].map(lambda x: float(x))
+			mapper = {
+				'ide/nNF': 'DATA DA EMISSÃO',
+				'ide/nNF': 'Nº',
+				'dest/CNPJ': 'CNPJ DO DESTINATÁRIO',
+				'dest/xNome': 'NOME DO DESTINATÁRIO',
+				'emit/CNPJ': 'CNPJ DO EMITENTE',
+				'emit/xNome': 'NOME DO EMITENTE',
+				'det/prod/cProd': 'CÓDIGO DO PRODUTO',
+				'det/prod/xProd': 'DESCRIÇÃO DO PRODUTO',
+				'det/prod/CFOP': 'CFOP',
+				'det/prod/qCom': 'QTD',
+				'det/prod/uCom': 'UN',
+				'det/prod/vUnCom': 'V. UNITÁRIO',
+				'det/prod/vProd': 'V. TOTAL',
+			}
+			df = df[mapper.keys()]
+			df = df.rename(mapper)
+		
 		async def processFileList(event):
 			print('Fazendo...')
 			document.getElementById("status").textContent = 'Fazendo...'
 			files = document.getElementById("fileInput").files
 			nfes = await FileList2BytesIO(files)
 			nfes = [ET.parse(x).getroot() for x in nfes]
-			to_excel(xmls2df(nfes).ffill(), f'{document.getElementById("fname").value}.xlsx')
+			df = xmls2df(nfes).ffill()
+			df = format_nfe_sheet(df)
+			to_excel(df, f'{document.getElementById("fname").value}.xlsx')
 			print('Feito!')
 			document.getElementById("status").textContent = 'Feito!'
 		
