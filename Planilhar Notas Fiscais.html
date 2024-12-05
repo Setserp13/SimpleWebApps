@@ -46,7 +46,7 @@
 			files = document.getElementById("fileInput").files
 			nfes = await FileList2BytesIO(files)
 			nfes = [ET.parse(x).getroot() for x in nfes]
-			to_excel(xmls2df(nfes), f'{document.getElementById("fname").value}.xlsx')
+			to_excel(xmls2df(nfes).ffill(), f'{document.getElementById("fname").value}.xlsx')
 			print('Feito!')
 			document.getElementById("status").textContent = 'Feito!'
 		
