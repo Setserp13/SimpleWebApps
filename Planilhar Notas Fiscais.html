@@ -59,7 +59,7 @@
 				'det/prod/vProd': 'V. TOTAL',
 			}
 			df = df[mapper.keys()]
-			return df.rename(mapper)
+			return df.rename(columns=mapper)
 		
 		async def processFileList(event):
 			print('Fazendo...')
