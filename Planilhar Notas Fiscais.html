@@ -43,6 +43,8 @@
 		def format_nfe_sheet(df):
 			for column in ['det/prod/qCom', 'det/prod/vUnCom', 'det/prod/vProd']:
 				df[column] = df[column].map(lambda x: float(x))
+			for column in ['ide/dhEmi']:
+				df[column] = df[column].map(lambda x: pd.to_datetime(x[:10]))
 			mapper = {
 				'ide/nNF': 'Nº',
 				'ide/dhEmi': 'DATA DA EMISSÃO',		
